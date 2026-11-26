@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bolos por Encomenda | Docear Confeitaria</title>
+<meta name="description" content="Monte seu bolo decorado do jeito que quiser: tamanho, massa, recheio e decoração. Peça com 2 dias de antecedência direto pelo WhatsApp.">
+<meta name="robots" content="index, follow">
+<link rel="icon" type="image/png" href="images/logotipo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+<style>
+.builder-hero { padding: 2.4rem 0 0.5rem; text-align: center; }
+.builder-hero .hero-kicker { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--clay-dark); }
+.builder-hero h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.25; margin-top: 0.6rem; }
+.builder-hero p { max-width: 520px; margin: 0.9rem auto 0; color: var(--ink-soft); font-size: 0.9rem; line-height: 1.5; }
+@media (max-width: 720px) {
+  .builder-hero h1 { font-size: 1.5rem; max-width: 320px; margin-inline: auto; }
+  .builder-hero p { max-width: 300px; font-size: 0.84rem; }
+}
+
+.builder-layout { display: flex; gap: 1.8rem; align-items: flex-start; margin-top: 2.2rem; margin-bottom: 3.5rem; flex-wrap: wrap; }
+.builder-form { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 1.4rem; }
+.builder-cart { flex: 1 1 300px; min-width: 280px; position: sticky; top: 92px; }
+
+.step { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 1.6rem 1.6rem 1.7rem; box-shadow: 0 4px 16px rgba(80,55,30,0.05); }
+.step-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: var(--clay); color: #fff; font-weight: 800; font-size: 0.82rem; margin-right: 0.5rem; }
+.step h2 { display: inline; font-size: 1.1rem; font-family: 'Nunito', sans-serif; font-weight: 800; vertical-align: middle; }
+.step-sub { color: var(--ink-soft); font-size: 0.86rem; margin: 0.5rem 0 1.1rem; }
+
+.opt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.7rem; }
+.opt-pill { border: 1.5px solid var(--line); border-radius: 14px; padding: 0.8rem 0.9rem; cursor: pointer; text-align: left; background: #fff; transition: border-color 0.18s ease, background 0.18s ease; }
+.opt-pill:hover { border-color: var(--clay); }
+.opt-pill.is-selected { border-color: var(--clay); background: #fdf4ec; }
+.opt-pill strong { display: block; font-size: 0.92rem; }
+.opt-pill span { display: block; font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.15rem; }
+.opt-pill .opt-price { font-size: 0.88rem; font-weight: 800; color: var(--clay-dark); margin-top: 0.35rem; }
+
+.field-row { display: flex; flex-wrap: wrap; gap: 0.9rem; }
+.field { flex: 1 1 160px; display: flex; flex-direction: column; gap: 0.35rem; }
+.field label { font-size: 0.8rem; font-weight: 700; color: var(--ink-soft); }
+.field input[type="text"], .field input[type="date"], .field input[type="time"], .field input[type="tel"], .field select, .field textarea {
+  border: 1.5px solid var(--line); border-radius: 12px; padding: 0.65rem 0.8rem; font-family: inherit; font-size: 0.92rem; color: var(--ink); background: #fff;
+}
+.field textarea { resize: vertical; min-height: 64px; }
+
+.naked-note { background: #f6ece0; border-radius: 12px; padding: 0.8rem 1rem; font-size: 0.85rem; color: var(--ink-soft); }
+
+.btn-add { width: 100%; justify-content: center; }
+.form-error { color: #a13d2b; font-size: 0.84rem; font-weight: 700; margin-top: 0.4rem; display: none; }
+.form-error.is-visible { display: block; }
+
+/* Carrinho */
+.cart-box { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 1.5rem 1.4rem; box-shadow: 0 4px 16px rgba(80,55,30,0.06); }
+.cart-box h2 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+.cart-empty { color: var(--ink-soft); font-size: 0.88rem; margin: 0.6rem 0 0; }
+.cart-item { border-top: 1px solid var(--line); padding: 0.9rem 0; display: flex; justify-content: space-between; gap: 0.6rem; }
+.cart-item-info strong { font-size: 0.92rem; display: block; }
+.cart-item-info span { font-size: 0.8rem; color: var(--ink-soft); display: block; line-height: 1.4; margin-top: 0.15rem; }
+.cart-item-price { font-weight: 800; color: var(--clay-dark); white-space: nowrap; font-size: 0.92rem; }
+.cart-remove { background: none; border: none; color: #a13d2b; font-size: 0.76rem; font-weight: 700; cursor: pointer; padding: 0.2rem 0; }
+.cart-total { display: flex; justify-content: space-between; font-weight: 800; font-size: 1rem; border-top: 2px solid var(--ink); margin-top: 0.8rem; padding-top: 0.8rem; }
+.cart-note { font-size: 0.76rem; color: var(--ink-soft); margin-top: 0.3rem; }
+.btn-send { width: 100%; justify-content: center; margin-top: 1.1rem; background: #25D366; }
+.btn-send:hover { background: #1fb857; }
+.btn-send[disabled] { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+@media (max-width: 900px) {
+  .builder-cart { position: static; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="topbar-track"><span class="topbar-full">Delivery com taxa grátis em pedidos selecionados &middot; Bolos por encomenda com 2 dias de antecedência</span><span class="topbar-short" aria-hidden="true">Delivery grátis &middot; Encomenda com antecedência</span></div></div>
+
+<header class="site-header">
+  <input type="checkbox" id="navToggle" class="nav-toggle-input">
+  <div class="header-top">
+    <a href="index.html" aria-label="Docear Confeitaria - Início">
+      <div class="brand-mark"><img src="images/logotipo.png" alt="Docear Confeitaria"></div>
+    </a>
+    <div class="header-cta"><a class="btn-pedir" href="https://instadelivery.com.br/docear" target="_blank" rel="noopener">Pedir</a></div>
+  </div>
+  <label for="navToggle" class="nav-toggle-btn">☰ Menu</label>
+  <nav class="main-nav" aria-label="Navegação principal">
+    <div class="nav-row">
+      <a href="index.html" class="nav-link">Início</a>
+      <a href="index.html#quem-somos" class="nav-link">Quem Somos</a>
+      <a href="https://instadelivery.com.br/docear" target="_blank" rel="noopener" class="nav-link">Delivery</a>
+      <a href="bolos-encomenda.html" class="nav-link is-active">Bolos por Encomenda</a>
+      <a href="eventos.html" class="nav-link">Eventos</a>
+      <a href="https://api.whatsapp.com/send/?phone=5511915147456&text=Oi%2C%20Duda%21%20Vim%20pelo%20site%20da%20Docear%20e%20quero%20fazer%20um%20pedido%20%F0%9F%8D%B0&type=phone_number&app_absent=0" target="_blank" rel="noopener" class="nav-link">WhatsApp</a>
+    </div>
+  </nav>
+</header>
+
+<a class="whatsapp-float" href="https://api.whatsapp.com/send/?phone=5511915147456&text=Oi%2C%20Duda%21%20Vim%20pelo%20site%20da%20Docear%20e%20quero%20fazer%20um%20pedido%20%F0%9F%8D%B0&type=phone_number&app_absent=0" target="_blank" rel="noopener" aria-label="Chamar no WhatsApp">
+  <span class="whatsapp-float-ring"></span>
+  <svg class="whatsapp-float-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path fill="#fff" d="M16.004 3C9.374 3 4 8.373 4 15.002c0 2.386.698 4.611 1.903 6.48L4.06 29l7.72-2.023a11.94 11.94 0 0 0 4.224.766h.004c6.629 0 12.002-5.373 12.002-12.003C27.01 8.373 22.636 3 16.004 3Zm0 21.783h-.003a9.74 9.74 0 0 1-4.966-1.36l-.356-.21-4.583 1.2 1.223-4.467-.232-.459a9.73 9.73 0 0 1-1.489-5.19c0-5.39 4.39-9.78 9.81-9.78 2.62 0 5.082 1.022 6.933 2.876a9.73 9.73 0 0 1 2.872 6.912c0 5.39-4.39 9.78-9.81 9.78Zm5.366-7.33c-.294-.147-1.74-.858-2.009-.956-.27-.098-.467-.147-.663.147-.196.294-.762.956-.934 1.152-.172.196-.344.22-.638.073-.294-.147-1.242-.458-2.366-1.463-.874-.78-1.465-1.744-1.637-2.038-.172-.294-.018-.453.13-.6.133-.133.294-.344.441-.515.147-.172.196-.294.294-.49.098-.196.049-.368-.025-.515-.073-.147-.663-1.602-.909-2.194-.24-.576-.484-.498-.663-.507l-.565-.01c-.196 0-.515.073-.785.368-.27.294-1.03 1.007-1.03 2.457 0 1.449 1.055 2.85 1.202 3.046.147.196 2.077 3.17 5.033 4.444.703.304 1.252.486 1.68.622.706.224 1.348.192 1.855.117.566-.085 1.74-.712 1.985-1.4.245-.69.245-1.28.172-1.4-.073-.123-.269-.196-.563-.343Z"/>
+  </svg>
+</a>
+
+<main>
+<div class="wrap builder-hero reveal">
+  <div class="hero-kicker">Bolos por Encomenda</div>
+  <h1>Monte o seu bolo do jeitinho que você quiser</h1>
+  <p>Escolha tamanho, modelo, massa, recheio e decoração. Dá pra montar mais de um bolo e enviar tudo junto num pedido só pelo WhatsApp.</p>
+</div>
+
+<div class="wrap builder-layout">
+  <div class="builder-form">
+
+    <div class="step" id="step-tamanho">
+      <span class="step-num">1</span><h2>Tamanho</h2>
+      <p class="step-sub">Valores de exemplo — a Docear confirma o preço final no WhatsApp.</p>
+      <div class="opt-grid" data-group="tamanho">
+        <button type="button" class="opt-pill" data-value="PP" data-price="89.90" data-label="PP · Aro 11 (1kg, 6 a 8 fatias)"><strong>PP</strong><span>Aro 11 &middot; 1kg &middot; 6 a 8 fatias</span><span class="opt-price">R$ 89,90</span></button>
+        <button type="button" class="opt-pill" data-value="P" data-price="150.00" data-label="P · Aro 15 (1,7kg, 12 a 15 fatias)"><strong>P</strong><span>Aro 15 &middot; 1,7kg &middot; 12 a 15 fatias</span><span class="opt-price">R$ 150,00</span></button>
+        <button type="button" class="opt-pill" data-value="M" data-price="219.00" data-label="M · Aro 20 (2,5kg, 20 a 25 fatias)"><strong>M</strong><span>Aro 20 &middot; 2,5kg &middot; 20 a 25 fatias</span><span class="opt-price">R$ 219,00</span></button>
+        <button type="button" class="opt-pill" data-value="G" data-price="279.90" data-label="G · Aro 25 (3,3kg, 30 a 35 fatias)"><strong>G</strong><span>Aro 25 &middot; 3,3kg &middot; 30 a 35 fatias</span><span class="opt-price">R$ 279,90</span></button>
+        <button type="button" class="opt-pill" data-value="GG" data-price="419.90" data-label="GG · Aro 30 (5kg, 50 a 58 fatias)"><strong>GG</strong><span>Aro 30 &middot; 5kg &middot; 50 a 58 fatias</span><span class="opt-price">R$ 419,90</span></button>
+        <button type="button" class="opt-pill" data-value="Mega" data-price="629.90" data-label="Mega · Aro 35 (8kg, até 80 fatias)"><strong>Mega</strong><span>Aro 35 &middot; 8kg &middot; até 80 fatias</span><span class="opt-price">R$ 629,90</span></button>
+      </div>
+    </div>
+
+    <div class="step" id="step-modelo">
+      <span class="step-num">2</span><h2>Modelo</h2>
+      <div class="opt-grid" data-group="modelo">
+        <button type="button" class="opt-pill" data-value="Naked Cake" data-price="0" data-label="Naked Cake"><strong>Naked Cake</strong><span>Laterais aparentes, decoração natural</span><span class="opt-price">Incluso</span></button>
+        <button type="button" class="opt-pill" data-value="Chantininho" data-price="0" data-label="Chantininho"><strong>Chantininho</strong><span>Espatulado liso, decoração à escolha</span><span class="opt-price">Incluso</span></button>
+      </div>
+    </div>
+
+    <div class="step" id="step-massa">
+      <span class="step-num">3</span><h2>Massa</h2>
+      <div class="opt-grid" data-group="massa">
+        <button type="button" class="opt-pill" data-value="Chocolate" data-price="0" data-label="Chocolate"><strong>Chocolate</strong></button>
+        <button type="button" class="opt-pill" data-value="Baunilha" data-price="0" data-label="Baunilha"><strong>Baunilha</strong></button>
+        <button type="button" class="opt-pill" data-value="Branca" data-price="0" data-label="Branca"><strong>Branca</strong></button>
+      </div>
+    </div>
+
+    <div class="step" id="step-recheio">
+      <span class="step-num">4</span><h2>Recheio</h2>
+      <div class="opt-grid" data-group="recheio">
+        <button type="button" class="opt-pill" data-value="Prestígio" data-price="0" data-label="Prestígio"><strong>Prestígio</strong></button>
+        <button type="button" class="opt-pill" data-value="Doce de leite" data-price="0" data-label="Doce de leite"><strong>Doce de leite</strong></button>
+        <button type="button" class="opt-pill" data-value="Ganache" data-price="0" data-label="Ganache"><strong>Ganache</strong></button>
+        <button type="button" class="opt-pill" data-value="Maracujá com chocolate" data-price="0" data-label="Maracujá com chocolate"><strong>Maracujá com chocolate</strong></button>
+        <button type="button" class="opt-pill" data-value="Brigadeiro branco" data-price="0" data-label="Brigadeiro branco"><strong>Brigadeiro branco</strong></button>
+        <button type="button" class="opt-pill" data-value="Brigadeiro de coco" data-price="0" data-label="Brigadeiro de coco"><strong>Brigadeiro de coco</strong></button>
+        <button type="button" class="opt-pill" data-value="Brigadeiro de Ninho" data-price="0" data-label="Brigadeiro de Ninho"><strong>Brigadeiro de Ninho</strong></button>
+        <button type="button" class="opt-pill" data-value="Brigadeiro tradicional" data-price="0" data-label="Brigadeiro tradicional"><strong>Brigadeiro tradicional</strong></button>
+        <button type="button" class="opt-pill" data-value="Brigadeiro 50% cacau" data-price="0" data-label="Brigadeiro 50% cacau"><strong>Brigadeiro 50% cacau</strong></button>
+        <button type="button" class="opt-pill" data-value="Ninho com Nutella" data-price="0" data-label="Ninho com Nutella"><strong>Ninho com Nutella</strong></button>
+        <button type="button" class="opt-pill" data-value="Ninho com morango" data-price="0" data-label="Ninho com morango"><strong>Ninho com morango</strong></button>
+        <button type="button" class="opt-pill" data-value="Ninho com brigadeiro" data-price="0" data-label="Ninho com brigadeiro"><strong>Ninho com brigadeiro</strong></button>
+        <button type="button" class="opt-pill" data-value="Creme belga com abacaxi" data-price="0" data-label="Creme belga com abacaxi"><strong>Creme belga com abacaxi</strong></button>
+        <button type="button" class="opt-pill" data-value="Doce de leite com abacaxi" data-price="0" data-label="Doce de leite com abacaxi"><strong>Doce de leite com abacaxi</strong></button>
+      </div>
+      <div class="field" style="margin-top:0.8rem;">
+        <label for="recheioCustom">Não achou o seu sabor? Escolha o seu</label>
+        <input type="text" id="recheioCustom" placeholder="Escreva aqui o recheio que você imagina">
+      </div>
+    </div>
+
+    <div class="step" id="step-decoracao">
+      <span class="step-num">5</span><h2>Decoração</h2>
+      <p class="step-sub" id="decoracao-hint">Escolha o modelo Chantininho pra liberar as opções de decoração.</p>
+      <div class="field-row" id="decoracao-fields" style="display:none;">
+        <div class="field">
+          <label for="corChantininho">Cor do chantininho</label>
+          <input type="text" id="corChantininho" placeholder="Ex: rosa claro">
+        </div>
+        <div class="field">
+          <label for="acabamento">Acabamento</label>
+          <select id="acabamento">
+            <option value="Liso">Liso</option>
+            <option value="Texturizado">Texturizado</option>
+          </select>
+        </div>
+        <div class="field" style="flex-basis: 100%;">
+          <label for="pedidoEspecial">Pedido especial de decoração (opcional)</label>
+          <textarea id="pedidoEspecial" placeholder="Descreva aqui se quiser algo fora do padrão — valor confirmado no WhatsApp"></textarea>
+        </div>
+      </div>
+      <div class="naked-note" id="naked-note">Naked Cake vem com decoração natural: laterais aparentes e brigadeiro ou frutas por cima.</div>
+    </div>
+
+    <button type="button" class="btn btn-primary btn-add" id="addToCart">Adicionar bolo ao carrinho</button>
+    <div class="form-error" id="addError">Escolha tamanho, modelo, massa e recheio antes de adicionar ao carrinho.</div>
+
+    <div class="step" id="step-entrega">
+      <span class="step-num">6</span><h2>Data, horário e retirada</h2>
+      <p class="step-sub">Pedidos precisam de 2 dias de antecedência (o dia de hoje não conta).</p>
+      <div class="field-row">
+        <div class="field">
+          <label for="dataRetirada">Dia</label>
+          <input type="date" id="dataRetirada">
+        </div>
+        <div class="field">
+          <label for="horaRetirada">Horário</label>
+          <input type="time" id="horaRetirada">
+        </div>
+        <div class="field" style="flex-basis: 100%;">
+          <label for="metodoEntrega">Como vai receber</label>
+          <select id="metodoEntrega">
+            <option value="Vou retirar no ateliê">Vou retirar no ateliê</option>
+            <option value="Vou mandar um Uber Flash (carro)">Vou mandar um Uber Flash (carro)</option>
+            <option value="Preciso que seja entregue">Preciso que seja entregue</option>
+          </select>
+        </div>
+        <div class="field" id="endereco-field" style="flex-basis: 100%; display:none;">
+          <label for="enderecoEntrega">Endereço completo</label>
+          <input type="text" id="enderecoEntrega" placeholder="Rua, número, bairro, complemento">
+          <p class="step-sub" style="margin-top:4px;">O valor do frete é informado no WhatsApp.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" id="step-dados">
+      <span class="step-num">7</span><h2>Seus dados</h2>
+      <div class="field-row">
+        <div class="field">
+          <label for="nomeCliente">Nome</label>
+          <input type="text" id="nomeCliente" placeholder="Seu nome">
+        </div>
+        <div class="field">
+          <label for="whatsappCliente">Seu WhatsApp</label>
+          <input type="tel" id="whatsappCliente" placeholder="(11) 90000-0000">
+        </div>
+        <div class="field" style="flex-basis: 100%;">
+          <label for="observacoes">Observações (alergias)</label>
+          <textarea id="observacoes" placeholder="Ex: alergia a glúten, lactose, corantes, etc."></textarea>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <aside class="builder-cart">
+    <div class="cart-box">
+      <h2>Carrinho</h2>
+      <p class="cart-empty" id="cartEmpty">Nenhum bolo adicionado ainda.</p>
+      <div id="cartItems"></div>
+      <div class="cart-total" id="cartTotal" style="display:none;">
+        <span>Total estimado</span>
+        <span id="cartTotalValue">R$ 0,00</span>
+      </div>
+      <p class="cart-note">Valor final confirmado pela Duda no WhatsApp.</p>
+      <button type="button" class="btn btn-primary btn-send" id="sendOrder" disabled>Enviar pedido pelo WhatsApp</button>
+      <div class="form-error" id="sendError">Adicione ao menos um bolo e preencha data, horário, retirada, endereço (se for entrega) e seus dados.</div>
+    </div>
+  </aside>
+</div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div>
+      <h3>Docear Confeitaria</h3>
+      <p>Doces e bolos artesanais com entrega em São Paulo.<br>Pedido mínimo R$ 15,00.</p>
+    </div>
+    <div>
+      <h3>Atendimento</h3>
+      <p>Atendimento no WhatsApp: segunda a segunda<br>
+      <a href="https://api.whatsapp.com/send/?phone=5511915147456&text=Oi%2C%20Duda%21%20Vim%20pelo%20site%20da%20Docear%20e%20quero%20fazer%20um%20pedido%20%F0%9F%8D%B0&type=phone_number&app_absent=0" target="_blank" rel="noopener">📱 Fale com a gente no WhatsApp</a></p>
+    </div>
+    <div>
+      <h3>Siga a Docear</h3>
+      <p><a href="https://www.instagram.com/doceaar/" target="_blank" rel="noopener">📸 Instagram @doceaar</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">Docear Confeitaria &middot; Feito com carinho para adoçar o seu dia</div>
+</footer>
+
+<script>
+(function () {
+  var WHATSAPP_PHONE = "5511915147456";
+  var selections = { tamanho: null, modelo: null, massa: null, recheio: null };
+  var cart = [];
+  var orderId = "DOC" + Math.floor(1000 + Math.random() * 9000);
+
+  function fmtBRL(v) {
+    return "R$ " + v.toFixed(2).replace(".", ",");
+  }
+
+  document.querySelectorAll(".opt-grid").forEach(function (group) {
+    var groupName = group.getAttribute("data-group");
+    group.querySelectorAll(".opt-pill").forEach(function (pill) {
+      pill.addEventListener("click", function () {
+        group.querySelectorAll(".opt-pill").forEach(function (p) { p.classList.remove("is-selected"); });
+        pill.classList.add("is-selected");
+        selections[groupName] = {
+          value: pill.getAttribute("data-value"),
+          price: parseFloat(pill.getAttribute("data-price")),
+          label: pill.getAttribute("data-label")
+        };
+        if (groupName === "modelo") {
+          var isChantininho = selections.modelo.value === "Chantininho";
+          document.getElementById("decoracao-fields").style.display = isChantininho ? "flex" : "none";
+          document.getElementById("naked-note").style.display = isChantininho ? "none" : "block";
+          document.getElementById("decoracao-hint").textContent = isChantininho
+            ? "Conte pra gente como você imagina a decoração."
+            : "Escolha o modelo Chantininho pra liberar as opções de decoração.";
+        }
+        if (groupName === "recheio") {
+          var recheioCustomEl = document.getElementById("recheioCustom");
+          if (recheioCustomEl) recheioCustomEl.value = "";
+        }
+      });
+    });
+  });
+
+  var recheioCustomInput = document.getElementById("recheioCustom");
+  if (recheioCustomInput) {
+    recheioCustomInput.addEventListener("input", function () {
+      var text = recheioCustomInput.value.trim();
+      var recheioGroup = document.querySelector('.opt-grid[data-group="recheio"]');
+      if (text) {
+        if (recheioGroup) recheioGroup.querySelectorAll(".opt-pill").forEach(function (p) { p.classList.remove("is-selected"); });
+        selections.recheio = { value: text, price: 0, label: text };
+      } else {
+        selections.recheio = null;
+      }
+    });
+  }
+
+
+  var metodoSelect = document.getElementById("metodoEntrega");
+  var enderecoField = document.getElementById("endereco-field");
+  function toggleEndereco() {
+    enderecoField.style.display = metodoSelect.value === "Preciso que seja entregue" ? "block" : "none";
+  }
+  metodoSelect.addEventListener("change", toggleEndereco);
+  toggleEndereco();
+
+  function renderCart() {
+    var itemsEl = document.getElementById("cartItems");
+    var emptyEl = document.getElementById("cartEmpty");
+    var totalEl = document.getElementById("cartTotal");
+    var totalValueEl = document.getElementById("cartTotalValue");
+    var sendBtn = document.getElementById("sendOrder");
+
+    itemsEl.innerHTML = "";
+    if (cart.length === 0) {
+      emptyEl.style.display = "block";
+      totalEl.style.display = "none";
+      sendBtn.disabled = true;
+      return;
+    }
+    emptyEl.style.display = "none";
+    totalEl.style.display = "flex";
+
+    var total = 0;
+    cart.forEach(function (item, idx) {
+      total += item.price;
+      var row = document.createElement("div");
+      row.className = "cart-item";
+      var decoBits = [];
+      if (item.deco.cor) decoBits.push("Cor: " + item.deco.cor);
+      if (item.deco.acabamento) decoBits.push(item.deco.acabamento);
+      row.innerHTML =
+        '<div class="cart-item-info">' +
+          "<strong>Bolo " + (idx + 1) + " — " + item.tamanho.label + "</strong>" +
+          "<span>" + item.modelo.value + " &middot; " + item.massa.value + " &middot; " + item.recheio.value + "</span>" +
+          (decoBits.length ? "<span>" + decoBits.join(" &middot; ") + "</span>" : "") +
+        "</div>" +
+        '<div style="text-align:right;">' +
+          '<div class="cart-item-price">' + fmtBRL(item.price) + "</div>" +
+          '<button type="button" class="cart-remove" data-idx="' + idx + '">remover</button>' +
+        "</div>";
+      itemsEl.appendChild(row);
+    });
+    totalValueEl.textContent = fmtBRL(total);
+    sendBtn.disabled = false;
+
+    itemsEl.querySelectorAll(".cart-remove").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        cart.splice(parseInt(btn.getAttribute("data-idx"), 10), 1);
+        renderCart();
+      });
+    });
+  }
+
+  document.getElementById("addToCart").addEventListener("click", function () {
+    var errorEl = document.getElementById("addError");
+    if (!selections.tamanho || !selections.modelo || !selections.massa || !selections.recheio) {
+      errorEl.classList.add("is-visible");
+      return;
+    }
+    errorEl.classList.remove("is-visible");
+
+    var deco = { cor: "", acabamento: "", texto: "", pedido: "" };
+    if (selections.modelo.value === "Chantininho") {
+      deco.cor = document.getElementById("corChantininho").value.trim();
+      deco.acabamento = document.getElementById("acabamento").value;
+      deco.pedido = document.getElementById("pedidoEspecial").value.trim();
+    }
+
+    var price = selections.tamanho.price + selections.modelo.price + selections.massa.price + selections.recheio.price;
+    cart.push({
+      tamanho: selections.tamanho,
+      modelo: selections.modelo,
+      massa: selections.massa,
+      recheio: selections.recheio,
+      deco: deco,
+      price: price
+    });
+    renderCart();
+  });
+
+  document.getElementById("sendOrder").addEventListener("click", function () {
+    var errorEl = document.getElementById("sendError");
+    var data = document.getElementById("dataRetirada").value;
+    var hora = document.getElementById("horaRetirada").value;
+    var metodo = document.getElementById("metodoEntrega").value;
+    var endereco = document.getElementById("enderecoEntrega").value.trim();
+    var nome = document.getElementById("nomeCliente").value.trim();
+    var whatsapp = document.getElementById("whatsappCliente").value.trim();
+    var obs = document.getElementById("observacoes").value.trim();
+
+    if (cart.length === 0 || !data || !hora || !nome || !whatsapp || (metodo === "Preciso que seja entregue" && !endereco)) {
+      errorEl.classList.add("is-visible");
+      return;
+    }
+    errorEl.classList.remove("is-visible");
+
+    var dataFmt = new Date(data + "T00:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit" });
+
+    var lines = [];
+    lines.push("Oi, Duda! Quero encomendar bolo(s) :)");
+    lines.push("*Pedido " + orderId + "*");
+    lines.push("Retirada: " + dataFmt + " às " + hora);
+    lines.push("Como: " + metodo);
+    if (metodo === "Preciso que seja entregue" && endereco) lines.push("Endereço: " + endereco);
+    lines.push("");
+
+    var total = 0;
+    cart.forEach(function (item, idx) {
+      total += item.price;
+      lines.push("*Bolo " + (idx + 1) + "*");
+      lines.push("Tamanho " + item.tamanho.label);
+      lines.push((item.modelo.value === "Naked Cake" ? "Naked Cake" : "Chantininho") + " · Massa " + item.massa.value + " · Recheio " + item.recheio.value);
+      if (item.deco.cor) lines.push("Cor do chantininho: " + item.deco.cor);
+      if (item.deco.acabamento) lines.push("Acabamento: " + item.deco.acabamento);
+      if (item.deco.pedido) lines.push("Pedido especial: " + item.deco.pedido);
+      lines.push("Valor estimado: " + fmtBRL(item.price));
+      lines.push("");
+    });
+
+    lines.push("*Total estimado: " + fmtBRL(total) + "* (a confirmar com você)");
+    lines.push("");
+    lines.push("Nome: " + nome);
+    lines.push("Meu WhatsApp: " + whatsapp);
+    if (obs) lines.push("Observações: " + obs);
+
+    var text = encodeURIComponent(lines.join("\n"));
+    var url = "https://api.whatsapp.com/send/?phone=" + WHATSAPP_PHONE + "&text=" + text + "&type=phone_number&app_absent=0";
+    window.location.href = url;
+  });
+
+  // Data mínima: hoje + 2 dias
+  var min = new Date();
+  min.setDate(min.getDate() + 2);
+  document.getElementById("dataRetirada").min = min.toISOString().slice(0, 10);
+})();
+</script>
+<script src="js/site.js" defer></script>
+
+</body>
+</html>
